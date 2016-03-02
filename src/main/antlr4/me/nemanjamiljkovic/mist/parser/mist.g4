@@ -1,0 +1,5 @@
+grammar mist;
+
+program
+    : 'hello'
+    ;
