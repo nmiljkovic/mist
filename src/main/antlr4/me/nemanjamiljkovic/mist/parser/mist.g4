@@ -5,15 +5,41 @@ program
     ;
 
 mainFunction
-    :   'void' 'main' '(' ')' '{' printStatement '}'
+    :   'void' 'main' '(' ')' variableDeclarationList* '{' '}'
     ;
 
-printStatement
-    :   'print' '(' expression=HelloWorld ')' ';'
+variableDeclarationList
+    :   typeSpecifier variableNameList ';'
     ;
 
-HelloWorld
-    :   '"hello world"'
+variableNameList
+    :   Identifier (',' Identifier)*
+    ;
+
+typeSpecifier
+    :   'int'
+    ;
+
+Identifier
+    :   IdentifierNondigit
+        (   IdentifierNondigit
+        |   Digit
+        )*
+    ;
+
+fragment
+IdentifierNondigit
+    :   Nondigit
+    ;
+
+fragment
+Nondigit
+    :   [a-zA-Z_]
+    ;
+
+fragment
+Digit
+    :   [0-9]
     ;
 
 Whitespace

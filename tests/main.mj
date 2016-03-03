@@ -1,5 +1,7 @@
 program {
-  void main() {
-    print("hello world");
+  void main()
+   int foo;
+   int bar,
+   int foobar, barfoo;  {
   }
 }
