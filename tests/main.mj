@@ -1,7 +1,11 @@
 program {
-  void main()
-   int foo;
-   int bar,
-   int foobar, barfoo;  {
+  void main() {
+    foo = 1;
+    foo = 1*5
+        + 1/foo
+            - 5*2*3;
+    bar = foo;
+    foobar = bar * foo + 10;
+    x = (10+1)*2;
   }
 }

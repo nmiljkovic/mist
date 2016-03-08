@@ -27,6 +27,9 @@ public class CodeFormatterVisitor extends mistBaseVisitor<String> {
         }
         this.indentationLevel--;
         output += this.indent() + "{\n";
+        this.indentationLevel++;
+        output += ctx.statementList().accept(this);
+        this.indentationLevel--;
         output += this.indent() + "}\n";
 
         return output;
@@ -53,6 +56,47 @@ public class CodeFormatterVisitor extends mistBaseVisitor<String> {
     @Override
     public String visitTypeSpecifier(mistParser.TypeSpecifierContext ctx) {
         return ctx.getText();
+    }
+
+    @Override
+    public String visitStatementList(mistParser.StatementListContext ctx) {
+        String output = "";
+
+        for (mistParser.StatementContext statementContext : ctx.statement()) {
+            output += this.indent() + statementContext.accept(this);
+        }
+
+        return output;
+    }
+
+    @Override
+    public String visitAssignStatement(mistParser.AssignStatementContext ctx) {
+        return ctx.designator().accept(this) + " = " + ctx.expression().accept(this) + ";\n";
+    }
+
+    @Override
+    public String visitVariableIdentifier(mistParser.VariableIdentifierContext ctx) {
+        return ctx.Identifier().getText();
+    }
+
+    @Override
+    public String visitBinaryExpression(mistParser.BinaryExpressionContext ctx) {
+        return ctx.lhs.accept(this) + " " + ctx.operand.getText() + " " + ctx.rhs.accept(this);
+    }
+
+    @Override
+    public String visitMinusExpression(mistParser.MinusExpressionContext ctx) {
+        return "-" + ctx.expression().accept(this);
+    }
+
+    @Override
+    public String visitParenExpression(mistParser.ParenExpressionContext ctx) {
+        return "(" + ctx.expression().accept(this) + ")";
+    }
+
+    @Override
+    public String visitConstantExpression(mistParser.ConstantExpressionContext ctx) {
+        return ctx.Constant().getText();
     }
 
     private String indent() {

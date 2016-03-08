@@ -5,7 +5,7 @@ program
     ;
 
 mainFunction
-    :   'void' 'main' '(' ')' variableDeclarationList* '{' '}'
+    :   'void' 'main' '(' ')' variableDeclarationList* '{' statementList '}'
     ;
 
 variableDeclarationList
@@ -20,11 +20,38 @@ typeSpecifier
     :   'int'
     ;
 
+statementList
+    :   statement*
+    ;
+
+statement
+    :   designator '=' expression ';'       # assignStatement
+    ;
+
+designator
+    :   Identifier      # variableIdentifier
+    ;
+
+expression
+    :   lhs=expression operand='*' rhs=expression   # binaryExpression
+    |   lhs=expression operand='/' rhs=expression   # binaryExpression
+    |   lhs=expression operand='+' rhs=expression   # binaryExpression
+    |   lhs=expression operand='-' rhs=expression   # binaryExpression
+    |   '(' expression ')'          # parenExpression
+    |   '-' expression              # minusExpression
+    |   designator                  # variableAccessExpression
+    |   Constant                    # constantExpression
+    ;
+
 Identifier
     :   IdentifierNondigit
         (   IdentifierNondigit
         |   Digit
         )*
+    ;
+
+Constant
+    :   Digit+
     ;
 
 fragment

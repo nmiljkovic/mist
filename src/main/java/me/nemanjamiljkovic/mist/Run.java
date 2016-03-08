@@ -24,11 +24,14 @@ public class Run {
         CodeFormatterVisitor formatter = new CodeFormatterVisitor();
         String output = formatter.visit(tree);
 
-        System.out.println("Interpreter output:\n------\n");
-        InterpreterVisitor interpreter = new InterpreterVisitor();
-        interpreter.visit(tree);
+        if (parser.getNumberOfSyntaxErrors() == 0) {
+            System.out.println("Interpreter output:\n------\n");
+            InterpreterVisitor interpreter = new InterpreterVisitor();
+            interpreter.visit(tree);
+            System.out.println("\n------");
+        }
 
-        System.out.println("\n------\nFormatting result:");
+        System.out.println("Formatting result:");
         System.out.println(output);
     }
 }
