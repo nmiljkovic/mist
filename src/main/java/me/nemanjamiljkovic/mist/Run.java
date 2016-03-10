@@ -4,6 +4,7 @@ import me.nemanjamiljkovic.mist.parser.mistLexer;
 import me.nemanjamiljkovic.mist.parser.mistParser;
 import me.nemanjamiljkovic.mist.visitor.CodeFormatterVisitor;
 import me.nemanjamiljkovic.mist.visitor.InterpreterVisitor;
+import me.nemanjamiljkovic.mist.visitor.SemanticCheckVisitor;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -24,14 +25,22 @@ public class Run {
         CodeFormatterVisitor formatter = new CodeFormatterVisitor();
         String output = formatter.visit(tree);
 
-        if (parser.getNumberOfSyntaxErrors() == 0) {
-            System.out.println("Interpreter output:\n------\n");
-            InterpreterVisitor interpreter = new InterpreterVisitor();
-            interpreter.visit(tree);
-            System.out.println("\n------");
-        }
-
         System.out.println("Formatting result:");
         System.out.println(output);
+
+        if (parser.getNumberOfSyntaxErrors() != 0) {
+            return;
+        }
+
+        System.out.println("\n------");
+        System.out.println("Semantic check in progress...");
+        SemanticCheckVisitor semanticChecker = new SemanticCheckVisitor();
+        semanticChecker.visit(tree);
+        System.out.println("Program is semantically valid!");
+
+        System.out.println("\n------");
+        System.out.println("Interpreter output:\n");
+        InterpreterVisitor interpreter = new InterpreterVisitor();
+        interpreter.visit(tree);
     }
 }

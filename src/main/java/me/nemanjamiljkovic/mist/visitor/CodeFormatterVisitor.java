@@ -96,7 +96,7 @@ public class CodeFormatterVisitor extends mistBaseVisitor<String> {
 
     @Override
     public String visitConstantExpression(mistParser.ConstantExpressionContext ctx) {
-        return ctx.Constant().getText();
+        return ctx.constant().getText();
     }
 
     private String indent() {

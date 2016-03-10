@@ -78,6 +78,6 @@ public class InterpreterVisitor extends mistBaseVisitor<Object> {
 
     @Override
     public Object visitConstantExpression(mistParser.ConstantExpressionContext ctx) {
-        return Integer.parseInt(ctx.Constant().getText());
+        return Integer.parseInt(ctx.constant().getText());
     }
 }

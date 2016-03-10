@@ -18,6 +18,8 @@ variableNameList
 
 typeSpecifier
     :   'int'
+    |   'bool'
+    |   'char'
     ;
 
 statementList
@@ -40,7 +42,27 @@ expression
     |   '(' expression ')'          # parenExpression
     |   '-' expression              # minusExpression
     |   designator                  # variableAccessExpression
-    |   Constant                    # constantExpression
+    |   constant                    # constantExpression
+    ;
+
+constant
+    :   IntegerLiteral      # integerConstant
+    |   CharacterLiteral    # characterConstant
+    |   BooleanLiteral      # booleanConstant
+    ;
+
+BooleanLiteral
+    :   'true'
+    |   'false'
+    ;
+
+CharacterLiteral
+    :   '\'' SingleCharacter '\''
+    |   '\'' EscapeSequence '\''
+    ;
+
+IntegerLiteral
+    :   Digit+
     ;
 
 Identifier
@@ -50,8 +72,14 @@ Identifier
         )*
     ;
 
-Constant
-    :   Digit+
+fragment
+SingleCharacter
+    :   ~['\\]
+    ;
+
+fragment
+EscapeSequence
+    :   '\\' [btnfr"'\\]
     ;
 
 fragment
