@@ -27,7 +27,9 @@ statementList
     ;
 
 statement
-    :   designator '=' expression ';'       # assignStatement
+    :   designator '=' expression ';'                               # assignStatement
+    |   'if' '(' expression ')' thenStatements=ifBody
+        ('else' elseStatements=ifBody)?                             # ifStatement
     ;
 
 designator
@@ -35,14 +37,36 @@ designator
     ;
 
 expression
-    :   lhs=expression operand='*' rhs=expression   # binaryExpression
-    |   lhs=expression operand='/' rhs=expression   # binaryExpression
-    |   lhs=expression operand='+' rhs=expression   # binaryExpression
-    |   lhs=expression operand='-' rhs=expression   # binaryExpression
+    :
+        lhs=expression operand=('*' | '/') rhs=expression     # binaryExpression
+    |   lhs=expression operand=('+' | '-') rhs=expression     # binaryExpression
+
+    |   lhs=expression operand=('==' | '<=' | '>=' | '<' | '>') rhs=expression  # comparisonExpression
+
+    |   lhs=expression operand='&&' rhs=expression      # logicalExpression
+    |   lhs=expression operand='||' rhs=expression      # logicalExpression
+
     |   '(' expression ')'          # parenExpression
     |   '-' expression              # minusExpression
     |   designator                  # variableAccessExpression
     |   constant                    # constantExpression
+    ;
+
+CompOp
+    :   '=='
+    |   '<='
+    |   '>='
+    |   '<'
+    |   '>'
+    ;
+
+ifBody
+    :   block       # ifBodyBlock
+    |   statement   # singleIfBodyStatement
+    ;
+
+block
+    :   '{' statementList '}'
     ;
 
 constant

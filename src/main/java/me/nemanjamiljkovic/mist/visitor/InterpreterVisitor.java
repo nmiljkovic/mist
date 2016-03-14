@@ -48,6 +48,21 @@ public class InterpreterVisitor extends mistBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitIfStatement(mistParser.IfStatementContext ctx) {
+        Boolean condition = (Boolean) ctx.expression().accept(this);
+
+        if (condition) {
+            return ctx.thenStatements.accept(this);
+        }
+
+        if (ctx.elseStatements != null) {
+            return ctx.elseStatements.accept(this);
+        }
+
+        return null;
+    }
+
+    @Override
     public Object visitBinaryExpression(mistParser.BinaryExpressionContext ctx) {
         String operand = ctx.operand.getText();
         Integer lhs = (Integer) ctx.lhs.accept(this);
@@ -63,6 +78,42 @@ public class InterpreterVisitor extends mistBaseVisitor<Object> {
             return lhs / rhs;
         } else {
             throw new RuntimeException(String.format("Invalid binary expression operand '%s'", operand));
+        }
+    }
+
+    @Override
+    public Object visitLogicalExpression(mistParser.LogicalExpressionContext ctx) {
+        String operand = ctx.operand.getText();
+        Boolean lhs = (Boolean) ctx.lhs.accept(this);
+        Boolean rhs = (Boolean) ctx.rhs.accept(this);
+
+        if (operand.equals("&&")) {
+            return lhs && rhs;
+        } else if (operand.equals("||")) {
+            return lhs || rhs;
+        } else {
+            throw new RuntimeException(String.format("Invalid logical expression operand '%s'", operand));
+        }
+    }
+
+    @Override
+    public Object visitComparisonExpression(mistParser.ComparisonExpressionContext ctx) {
+        String operand = ctx.operand.getText();
+        Object lhs = ctx.lhs.accept(this);
+        Object rhs = ctx.rhs.accept(this);
+
+        if (operand.equals("==")) {
+            return lhs.equals(rhs);
+        } else if (operand.equals("<=")) {
+            return (Integer) lhs <= (Integer) rhs;
+        } else if (operand.equals(">=")) {
+            return (Integer) lhs >= (Integer) rhs;
+        } else if (operand.equals("<")) {
+            return (Integer) lhs < (Integer) rhs;
+        } else if (operand.equals(">")) {
+            return (Integer) lhs > (Integer) rhs;
+        } else {
+            throw new RuntimeException(String.format("Invalid comparison expression operand '%s'", operand));
         }
     }
 

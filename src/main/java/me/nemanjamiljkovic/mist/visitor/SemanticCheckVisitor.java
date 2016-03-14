@@ -100,6 +100,74 @@ public class SemanticCheckVisitor extends mistBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitLogicalExpression(mistParser.LogicalExpressionContext ctx) {
+        Type lhsType = (Type) ctx.lhs.accept(this);
+        Type rhsType = (Type) ctx.rhs.accept(this);
+
+        if (lhsType != boolType && rhsType != boolType) {
+            throw new RuntimeException(
+                String.format(
+                    "Type mismatch for logical expression at line %d:\nBoth operands expected to be bool\n" +
+                        "Lhs operand typeof: %s\nRhs operand typeof: %s",
+                    ctx.start.getLine(), lhsType.toString(), rhsType.toString()
+                )
+            );
+        }
+
+        return boolType;
+    }
+
+    @Override
+    public Object visitComparisonExpression(mistParser.ComparisonExpressionContext ctx) {
+        Type lhsType = (Type) ctx.lhs.accept(this);
+        Type rhsType = (Type) ctx.rhs.accept(this);
+        String operand = ctx.operand.getText();
+
+        if (operand.equals("==")) {
+            if (!lhsType.equals(rhsType)) {
+                throw new RuntimeException(
+                    String.format(
+                        "Type mismatch for comparison expression at line %d:\n" +
+                            "Lhs operand typeof: %s\nRhs operand typeof: %s",
+                        ctx.start.getLine(), lhsType.toString(), rhsType.toString()
+                    )
+                );
+            }
+
+            return boolType;
+        }
+
+        if (operand.equals("<=") || operand.equals(">=") || operand.equals("<") || operand.equals(">")) {
+            if (lhsType != intType && rhsType != intType) {
+                throw new RuntimeException(
+                    String.format(
+                        "Type mismatch for binary expression at line %d:\nBoth operands expected to be int\n" +
+                            "Lhs operand typeof: %s\nRhs operand typeof: %s",
+                        ctx.start.getLine(), lhsType.toString(), rhsType.toString()
+                    )
+                );
+            }
+
+            return boolType;
+        }
+
+        throw new RuntimeException(String.format("Unhandled comparison operator '%s'", operand));
+    }
+
+    @Override
+    public Object visitIfStatement(mistParser.IfStatementContext ctx) {
+        Type conditionType = (Type) ctx.expression().accept(this);
+        if (conditionType != boolType) {
+            throw new RuntimeException(String.format(
+                "Expected condition expression to be typeof bool; provided typeof: %s",
+                conditionType.toString()
+            ));
+        }
+
+        return null;
+    }
+
+    @Override
     public Object visitMinusExpression(mistParser.MinusExpressionContext ctx) {
         Type type = (Type) ctx.expression().accept(this);
         if (type != intType) {
