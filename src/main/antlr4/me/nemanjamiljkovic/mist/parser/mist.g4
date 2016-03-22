@@ -27,9 +27,12 @@ statementList
     ;
 
 statement
-    :   designator '=' expression ';'                               # assignStatement
+    :   designator '=' expression ';'                       # assignStatement
+    |   designator '++' ';'                                 # incrementStatement
+    |   designator '--' ';'                                 # decrementStatement
     |   'if' '(' expression ')' thenStatements=ifBody
-        ('else' elseStatements=ifBody)?                             # ifStatement
+        ('else' elseStatements=ifBody)?                     # ifStatement
+    |   'while' '(' expression ')' block                    # whileStatement
     ;
 
 designator
@@ -37,8 +40,7 @@ designator
     ;
 
 expression
-    :
-        lhs=expression operand=('*' | '/') rhs=expression     # binaryExpression
+    :   lhs=expression operand=('*' | '/') rhs=expression     # binaryExpression
     |   lhs=expression operand=('+' | '-') rhs=expression     # binaryExpression
 
     |   lhs=expression operand=('==' | '<=' | '>=' | '<' | '>') rhs=expression  # comparisonExpression

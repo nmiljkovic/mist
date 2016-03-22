@@ -83,6 +83,36 @@ public class SemanticCheckVisitor extends mistBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitIncrementStatement(mistParser.IncrementStatementContext ctx) {
+        Type lhsType = (Type) ctx.designator().accept(this);
+        if (lhsType != intType) {
+            throw new RuntimeException(
+                String.format(
+                    "Type mismatch at line %d:\n%s\nExpected '%s', got '%s'",
+                    ctx.start.getLine(), ctx.getText(), intType.toString(), lhsType.toString()
+                )
+            );
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object visitDecrementStatement(mistParser.DecrementStatementContext ctx) {
+        Type lhsType = (Type) ctx.designator().accept(this);
+        if (lhsType != intType) {
+            throw new RuntimeException(
+                String.format(
+                    "Type mismatch at line %d:\n%s\nExpected '%s', got '%s'",
+                    ctx.start.getLine(), ctx.getText(), intType.toString(), lhsType.toString()
+                )
+            );
+        }
+
+        return null;
+    }
+
+    @Override
     public Object visitBinaryExpression(mistParser.BinaryExpressionContext ctx) {
         Type lhsType = (Type) ctx.lhs.accept(this);
         Type rhsType = (Type) ctx.rhs.accept(this);
@@ -156,6 +186,19 @@ public class SemanticCheckVisitor extends mistBaseVisitor<Object> {
 
     @Override
     public Object visitIfStatement(mistParser.IfStatementContext ctx) {
+        Type conditionType = (Type) ctx.expression().accept(this);
+        if (conditionType != boolType) {
+            throw new RuntimeException(String.format(
+                "Expected condition expression to be typeof bool; provided typeof: %s",
+                conditionType.toString()
+            ));
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object visitWhileStatement(mistParser.WhileStatementContext ctx) {
         Type conditionType = (Type) ctx.expression().accept(this);
         if (conditionType != boolType) {
             throw new RuntimeException(String.format(

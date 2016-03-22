@@ -79,6 +79,20 @@ public class CodeFormatterVisitor extends mistBaseVisitor<String> {
     }
 
     @Override
+    public String visitIncrementStatement(mistParser.IncrementStatementContext ctx) {
+        return this.indent(
+            ctx.designator().accept(this) + "++\n"
+        );
+    }
+
+    @Override
+    public String visitDecrementStatement(mistParser.DecrementStatementContext ctx) {
+        return this.indent(
+            ctx.designator().accept(this) + "--;\n"
+        );
+    }
+
+    @Override
     public String visitAssignStatement(mistParser.AssignStatementContext ctx) {
         return this.indent(
             ctx.designator().accept(this) + " = " + ctx.expression().accept(this) + ";\n"
@@ -132,6 +146,13 @@ public class CodeFormatterVisitor extends mistBaseVisitor<String> {
             output += ctx.elseStatements.accept(this);
         }
 
+        return output;
+    }
+
+    @Override
+    public String visitWhileStatement(mistParser.WhileStatementContext ctx) {
+        String output = this.indent("while (") + ctx.expression().accept(this) + ")\n";
+        output += ctx.block().accept(this);
         return output;
     }
 

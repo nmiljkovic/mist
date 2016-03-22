@@ -24,6 +24,26 @@ public class InterpreterVisitor extends mistBaseVisitor<Object> {
     }
 
     @Override
+    public Object visitIncrementStatement(mistParser.IncrementStatementContext ctx) {
+        String designator = (String)ctx.designator().accept(this);
+        Integer variableValue = variables.get(designator);
+        variableValue++;
+        variables.put(designator, variableValue);
+
+        return null;
+    }
+
+    @Override
+    public Object visitDecrementStatement(mistParser.DecrementStatementContext ctx) {
+        String designator = (String)ctx.designator().accept(this);
+        Integer variableValue = variables.get(designator);
+        variableValue--;
+        variables.put(designator, variableValue);
+
+        return null;
+    }
+
+    @Override
     public Object visitVariableIdentifier(mistParser.VariableIdentifierContext ctx) {
         return ctx.Identifier().toString();
     }
@@ -57,6 +77,15 @@ public class InterpreterVisitor extends mistBaseVisitor<Object> {
 
         if (ctx.elseStatements != null) {
             return ctx.elseStatements.accept(this);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object visitWhileStatement(mistParser.WhileStatementContext ctx) {
+        while ((Boolean) ctx.expression().accept(this)) {
+            ctx.block().accept(this);
         }
 
         return null;
